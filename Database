@@ -1,0 +1,795 @@
+-- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
+--
+-- Host: localhost    Database: warehouseinventorysystem
+-- ------------------------------------------------------
+-- Server version	8.0.45
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `auditlog`
+--
+
+DROP TABLE IF EXISTS `auditlog`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `auditlog` (
+  `LogID` int NOT NULL AUTO_INCREMENT,
+  `UserID` int DEFAULT NULL,
+  `Action` varchar(100) NOT NULL,
+  `TableName` varchar(100) NOT NULL,
+  `ActionDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `Description` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`LogID`),
+  KEY `FKAuditUser` (`UserID`),
+  CONSTRAINT `FKAuditUser` FOREIGN KEY (`UserID`) REFERENCES `systemuser` (`UserID`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `auditlog`
+--
+
+LOCK TABLES `auditlog` WRITE;
+/*!40000 ALTER TABLE `auditlog` DISABLE KEYS */;
+INSERT INTO `auditlog` VALUES (1,1,'INSERT','Product','2026-06-25 16:36:40','New Product Added'),(2,2,'UPDATE','WarehouseProduct','2026-06-25 16:36:40','Inventory Updated'),(3,3,'INSERT','SalesOrder','2026-06-25 16:36:40','Sales Order Created'),(4,NULL,'INSERT','Product','2026-06-25 16:39:43','New Product Added: Lenovo ThinkPad X1'),(5,NULL,'INSERT','Product','2026-06-26 06:53:26','New Product Added: HP ProBook 450 G8'),(6,NULL,'INSERT','Product','2026-06-26 08:17:03','New Product Added: Lenovo ThinkPad X1'),(7,NULL,'INSERT','Product','2026-06-26 10:06:19','New Product Added: HP ProBook 450 G9'),(8,NULL,'INSERT','Product','2026-06-26 16:15:54','New Product Added: Lenovo ThinkPad X1');
+/*!40000 ALTER TABLE `auditlog` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `category`
+--
+
+DROP TABLE IF EXISTS `category`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `category` (
+  `CategoryID` int NOT NULL AUTO_INCREMENT,
+  `CategoryName` varchar(70) NOT NULL,
+  `Description` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`CategoryID`),
+  UNIQUE KEY `CategoryName` (`CategoryName`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `category`
+--
+
+LOCK TABLES `category` WRITE;
+/*!40000 ALTER TABLE `category` DISABLE KEYS */;
+INSERT INTO `category` VALUES (1,'Electronics','Electronic devices'),(2,'Networking','Networking equipment'),(3,'Accessories','Computer accessories'),(4,'Office Supplies','Office products');
+/*!40000 ALTER TABLE `category` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `customer`
+--
+
+DROP TABLE IF EXISTS `customer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `customer` (
+  `CustomerID` int NOT NULL AUTO_INCREMENT,
+  `CustomerName` varchar(50) NOT NULL,
+  `PhoneNumber` varchar(20) DEFAULT NULL,
+  `Email` varchar(100) NOT NULL,
+  `Address` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`CustomerID`),
+  UNIQUE KEY `Email` (`Email`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `customer`
+--
+
+LOCK TABLES `customer` WRITE;
+/*!40000 ALTER TABLE `customer` DISABLE KEYS */;
+INSERT INTO `customer` VALUES (1,'ABC Traders','03110000001','abc.traders@gmail.com','Lahore'),(2,'Future Technologies','03110000002','futuretech@gmail.com','Faisalabad'),(3,'Prime Solutions','03110000003','prime.solutions@gmail.com','Islamabad');
+/*!40000 ALTER TABLE `customer` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `goodsreceipt`
+--
+
+DROP TABLE IF EXISTS `goodsreceipt`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `goodsreceipt` (
+  `ReceiptID` int NOT NULL AUTO_INCREMENT,
+  `PurchaseOrderID` int NOT NULL,
+  `ReceivedBy` int NOT NULL,
+  `ReceivedDate` date NOT NULL,
+  `Remarks` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`ReceiptID`),
+  KEY `FKReceiptPurchaseOrder` (`PurchaseOrderID`),
+  KEY `FKReceiptUser` (`ReceivedBy`),
+  CONSTRAINT `FKReceiptPurchaseOrder` FOREIGN KEY (`PurchaseOrderID`) REFERENCES `purchaseorder` (`PurchaseOrderID`),
+  CONSTRAINT `FKReceiptUser` FOREIGN KEY (`ReceivedBy`) REFERENCES `systemuser` (`UserID`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `goodsreceipt`
+--
+
+LOCK TABLES `goodsreceipt` WRITE;
+/*!40000 ALTER TABLE `goodsreceipt` DISABLE KEYS */;
+INSERT INTO `goodsreceipt` VALUES (1,1,4,'2026-06-05','Received in good condition');
+/*!40000 ALTER TABLE `goodsreceipt` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `inventorytransaction`
+--
+
+DROP TABLE IF EXISTS `inventorytransaction`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `inventorytransaction` (
+  `TransactionID` int NOT NULL AUTO_INCREMENT,
+  `ProductID` int NOT NULL,
+  `WarehouseID` int NOT NULL,
+  `TransactionType` enum('IN','OUT','TRANSFER') NOT NULL,
+  `Quantity` int NOT NULL,
+  `ReferenceType` enum('Purchase','Sale','Transfer','Manual') NOT NULL,
+  `ReferenceID` int DEFAULT NULL,
+  `TransactionDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`TransactionID`),
+  KEY `idx_InventoryProduct` (`ProductID`),
+  KEY `idx_InventoryWarehouse` (`WarehouseID`),
+  CONSTRAINT `FKTransactionProduct` FOREIGN KEY (`ProductID`) REFERENCES `product` (`ProductID`),
+  CONSTRAINT `FKTransactionWarehouse` FOREIGN KEY (`WarehouseID`) REFERENCES `warehouse` (`WarehouseID`),
+  CONSTRAINT `CheckTransactionQuantity` CHECK ((`Quantity` > 0))
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `inventorytransaction`
+--
+
+LOCK TABLES `inventorytransaction` WRITE;
+/*!40000 ALTER TABLE `inventorytransaction` DISABLE KEYS */;
+INSERT INTO `inventorytransaction` VALUES (1,1,1,'IN',5,'Purchase',1,'2026-06-25 16:36:40'),(2,1,1,'OUT',1,'Sale',1,'2026-06-25 16:36:40'),(3,5,2,'OUT',1,'Sale',1,'2026-06-25 16:36:40'),(4,4,2,'IN',2,'Purchase',2,'2026-06-25 16:36:40'),(5,6,3,'IN',15,'Purchase',3,'2026-06-25 16:36:40');
+/*!40000 ALTER TABLE `inventorytransaction` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `notification`
+--
+
+DROP TABLE IF EXISTS `notification`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `notification` (
+  `NotificationID` int NOT NULL AUTO_INCREMENT,
+  `UserID` int NOT NULL,
+  `Message` varchar(200) NOT NULL,
+  `CreatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `Status` enum('Unread','Read') DEFAULT 'Unread',
+  PRIMARY KEY (`NotificationID`),
+  KEY `idx_NotificationUser` (`UserID`),
+  CONSTRAINT `FKNotificationUser` FOREIGN KEY (`UserID`) REFERENCES `systemuser` (`UserID`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notification`
+--
+
+LOCK TABLES `notification` WRITE;
+/*!40000 ALTER TABLE `notification` DISABLE KEYS */;
+INSERT INTO `notification` VALUES (1,2,'Purchase Order Approved','2026-06-25 16:36:40','Read'),(2,4,'New Goods Receipt Added','2026-06-25 16:36:40','Unread'),(3,3,'Sales Order Created','2026-06-25 16:36:40','Unread');
+/*!40000 ALTER TABLE `notification` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `product`
+--
+
+DROP TABLE IF EXISTS `product`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `product` (
+  `ProductID` int NOT NULL AUTO_INCREMENT,
+  `CategoryID` int NOT NULL,
+  `SupplierID` int NOT NULL,
+  `ProductName` varchar(70) NOT NULL,
+  `SKU` varchar(50) NOT NULL,
+  `UnitPrice` decimal(10,2) NOT NULL,
+  `ReorderLevel` int DEFAULT '10',
+  `Description` varchar(200) DEFAULT NULL,
+  `CreatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `Status` enum('Active','Inactive','Discontinued') DEFAULT 'Active',
+  PRIMARY KEY (`ProductID`),
+  UNIQUE KEY `SKU` (`SKU`),
+  KEY `idx_ProductCategory` (`CategoryID`),
+  KEY `idx_ProductSupplier` (`SupplierID`),
+  CONSTRAINT `FKProductCategory` FOREIGN KEY (`CategoryID`) REFERENCES `category` (`CategoryID`),
+  CONSTRAINT `FKProductSupplier` FOREIGN KEY (`SupplierID`) REFERENCES `supplier` (`SupplierID`),
+  CONSTRAINT `CheckProductPrice` CHECK ((`UnitPrice` > 0)),
+  CONSTRAINT `CheckReorderLevel` CHECK ((`ReorderLevel` >= 0))
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `product`
+--
+
+LOCK TABLES `product` WRITE;
+/*!40000 ALTER TABLE `product` DISABLE KEYS */;
+INSERT INTO `product` VALUES (1,1,1,'Dell Latitude 5400','SKU001',125000.00,5,'Business Laptop','2026-06-25 16:36:40','Active'),(2,1,2,'HP ProBook 450 G9','SKU002',115000.00,5,'Office Laptop','2026-06-25 16:36:40','Active'),(3,2,2,'Cisco Catalyst 2960 Switch','SKU003',35000.00,10,'24-Port Managed Switch','2026-06-25 16:36:40','Active'),(4,2,2,'Cisco ISR 4331 Router','SKU004',85000.00,8,'Enterprise Router','2026-06-25 16:36:40','Active'),(5,3,3,'Logitech Wireless Mouse','SKU005',1800.00,20,'Wireless Mouse','2026-06-25 16:36:40','Active'),(6,3,3,'Mechanical Keyboard','SKU006',6500.00,15,'RGB Mechanical Keyboard','2026-06-25 16:36:40','Active'),(7,1,1,'Lenovo ThinkPad','SKU007',95000.00,5,'Business Laptop','2026-06-25 16:38:53','Active'),(8,1,1,'Lenovo ThinkPad X1','SKU008',140000.00,5,'Premium Business Laptop','2026-06-25 16:39:43','Active');
+/*!40000 ALTER TABLE `product` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `producttransfer`
+--
+
+DROP TABLE IF EXISTS `producttransfer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `producttransfer` (
+  `TransferID` int NOT NULL AUTO_INCREMENT,
+  `ProductID` int NOT NULL,
+  `SourceWarehouseID` int NOT NULL,
+  `DestinationWarehouseID` int NOT NULL,
+  `Quantity` int NOT NULL,
+  `TransferDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `Status` enum('Pending','Completed','Cancelled') DEFAULT 'Pending',
+  PRIMARY KEY (`TransferID`),
+  KEY `FKTransferProduct` (`ProductID`),
+  KEY `FKSourceWarehouse` (`SourceWarehouseID`),
+  KEY `FKDestinationWarehouse` (`DestinationWarehouseID`),
+  CONSTRAINT `FKDestinationWarehouse` FOREIGN KEY (`DestinationWarehouseID`) REFERENCES `warehouse` (`WarehouseID`),
+  CONSTRAINT `FKSourceWarehouse` FOREIGN KEY (`SourceWarehouseID`) REFERENCES `warehouse` (`WarehouseID`),
+  CONSTRAINT `FKTransferProduct` FOREIGN KEY (`ProductID`) REFERENCES `product` (`ProductID`),
+  CONSTRAINT `CheckDifferentWarehouses` CHECK ((`SourceWarehouseID` <> `DestinationWarehouseID`)),
+  CONSTRAINT `CheckTransferQuantity` CHECK ((`Quantity` > 0))
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `producttransfer`
+--
+
+LOCK TABLES `producttransfer` WRITE;
+/*!40000 ALTER TABLE `producttransfer` DISABLE KEYS */;
+INSERT INTO `producttransfer` VALUES (1,3,1,2,5,'2026-06-25 16:36:40','Completed'),(2,5,2,3,10,'2026-06-25 16:36:40','Pending'),(3,3,1,2,5,'2026-06-25 16:41:08','Completed');
+/*!40000 ALTER TABLE `producttransfer` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `purchaseorder`
+--
+
+DROP TABLE IF EXISTS `purchaseorder`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `purchaseorder` (
+  `PurchaseOrderID` int NOT NULL AUTO_INCREMENT,
+  `SupplierID` int NOT NULL,
+  `CreatedBy` int NOT NULL,
+  `OrderDate` date NOT NULL,
+  `ExpectedDate` date DEFAULT NULL,
+  `Status` enum('Pending','Approved','Received','Cancelled') DEFAULT 'Pending',
+  `TotalAmount` decimal(12,2) DEFAULT '0.00',
+  PRIMARY KEY (`PurchaseOrderID`),
+  KEY `idx_PurchaseOrderSupplier` (`SupplierID`),
+  KEY `idx_PurchaseOrderCreatedBy` (`CreatedBy`),
+  CONSTRAINT `FKPurchaseCreatedBy` FOREIGN KEY (`CreatedBy`) REFERENCES `systemuser` (`UserID`),
+  CONSTRAINT `FKPurchaseSupplierID` FOREIGN KEY (`SupplierID`) REFERENCES `supplier` (`SupplierID`),
+  CONSTRAINT `CheckPurchaseTotalAmount` CHECK ((`TotalAmount` >= 0))
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `purchaseorder`
+--
+
+LOCK TABLES `purchaseorder` WRITE;
+/*!40000 ALTER TABLE `purchaseorder` DISABLE KEYS */;
+INSERT INTO `purchaseorder` VALUES (1,1,2,'2026-06-01','2026-06-05','Received',600000.00),(2,2,2,'2026-06-10','2026-06-15','Approved',170000.00),(3,3,2,'2026-06-18','2026-06-22','Pending',90000.00),(4,1,2,'2026-06-25','2026-06-30','Pending',50000.00),(5,1,2,'2026-06-25','2026-06-30','Pending',50000.00);
+/*!40000 ALTER TABLE `purchaseorder` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `purchaseorderitem`
+--
+
+DROP TABLE IF EXISTS `purchaseorderitem`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `purchaseorderitem` (
+  `PurchaseOrderItemID` int NOT NULL AUTO_INCREMENT,
+  `PurchaseOrderID` int NOT NULL,
+  `ProductID` int NOT NULL,
+  `Quantity` int NOT NULL,
+  `UnitPrice` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`PurchaseOrderItemID`),
+  KEY `FKPurchaseOrderItemPO` (`PurchaseOrderID`),
+  KEY `FKPurchaseOrderItemProduct` (`ProductID`),
+  CONSTRAINT `FKPurchaseOrderItemPO` FOREIGN KEY (`PurchaseOrderID`) REFERENCES `purchaseorder` (`PurchaseOrderID`),
+  CONSTRAINT `FKPurchaseOrderItemProduct` FOREIGN KEY (`ProductID`) REFERENCES `product` (`ProductID`),
+  CONSTRAINT `CheckPurchaseOrderQuantity` CHECK ((`Quantity` > 0)),
+  CONSTRAINT `CheckPurchaseOrderUnitPrice` CHECK ((`UnitPrice` > 0))
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `purchaseorderitem`
+--
+
+LOCK TABLES `purchaseorderitem` WRITE;
+/*!40000 ALTER TABLE `purchaseorderitem` DISABLE KEYS */;
+INSERT INTO `purchaseorderitem` VALUES (1,1,1,5,120000.00),(2,2,4,2,85000.00),(3,3,6,15,6000.00),(4,5,1,50,100.00);
+/*!40000 ALTER TABLE `purchaseorderitem` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `reporthistory`
+--
+
+DROP TABLE IF EXISTS `reporthistory`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `reporthistory` (
+  `ReportID` int NOT NULL AUTO_INCREMENT,
+  `GeneratedBy` int NOT NULL,
+  `ReportType` varchar(100) NOT NULL,
+  `GeneratedDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `Parameters` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`ReportID`),
+  KEY `FKReportUser` (`GeneratedBy`),
+  CONSTRAINT `FKReportUser` FOREIGN KEY (`GeneratedBy`) REFERENCES `systemuser` (`UserID`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reporthistory`
+--
+
+LOCK TABLES `reporthistory` WRITE;
+/*!40000 ALTER TABLE `reporthistory` DISABLE KEYS */;
+INSERT INTO `reporthistory` VALUES (1,1,'Inventory Report','2026-06-25 16:36:40','All Products'),(2,2,'Purchase Report','2026-06-25 16:36:40','June 2026'),(3,3,'Sales Report','2026-06-25 16:36:40','Completed Orders');
+/*!40000 ALTER TABLE `reporthistory` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `role`
+--
+
+DROP TABLE IF EXISTS `role`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `role` (
+  `RoleID` int NOT NULL AUTO_INCREMENT,
+  `RoleName` varchar(50) NOT NULL,
+  `Description` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`RoleID`),
+  UNIQUE KEY `RoleName` (`RoleName`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `role`
+--
+
+LOCK TABLES `role` WRITE;
+/*!40000 ALTER TABLE `role` DISABLE KEYS */;
+INSERT INTO `role` VALUES (1,'Admin','System Administrator'),(2,'Inventory Manager','Manages inventory operations'),(3,'Warehouse Staff','Handles warehouse operations'),(4,'Sales Manager','Manages customer orders');
+/*!40000 ALTER TABLE `role` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `salesorder`
+--
+
+DROP TABLE IF EXISTS `salesorder`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `salesorder` (
+  `SalesOrderID` int NOT NULL AUTO_INCREMENT,
+  `CustomerID` int NOT NULL,
+  `CreatedBy` int NOT NULL,
+  `OrderDate` date NOT NULL,
+  `Status` enum('Pending','Completed','Cancelled') DEFAULT 'Pending',
+  `TotalAmount` decimal(12,2) DEFAULT '0.00',
+  PRIMARY KEY (`SalesOrderID`),
+  KEY `idx_SalesOrderCustomer` (`CustomerID`),
+  KEY `idx_SalesOrderCreatedBy` (`CreatedBy`),
+  CONSTRAINT `FKSalesCreatedBy` FOREIGN KEY (`CreatedBy`) REFERENCES `systemuser` (`UserID`),
+  CONSTRAINT `FKSalesCustomer` FOREIGN KEY (`CustomerID`) REFERENCES `customer` (`CustomerID`),
+  CONSTRAINT `CheckSalesOrderTotalAmount` CHECK ((`TotalAmount` >= 0))
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `salesorder`
+--
+
+LOCK TABLES `salesorder` WRITE;
+/*!40000 ALTER TABLE `salesorder` DISABLE KEYS */;
+INSERT INTO `salesorder` VALUES (1,1,3,'2026-06-12','Completed',121800.00),(2,2,3,'2026-06-20','Pending',85000.00),(3,3,3,'2026-06-23','Pending',13000.00),(6,3,3,'2026-06-23','Cancelled',13000.00);
+/*!40000 ALTER TABLE `salesorder` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `salesorderitem`
+--
+
+DROP TABLE IF EXISTS `salesorderitem`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `salesorderitem` (
+  `SalesOrderItemID` int NOT NULL AUTO_INCREMENT,
+  `SalesOrderID` int NOT NULL,
+  `ProductID` int NOT NULL,
+  `Quantity` int NOT NULL,
+  `UnitPrice` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`SalesOrderItemID`),
+  KEY `FKSalesOrderItemSO` (`SalesOrderID`),
+  KEY `FKSalesOrderItemProduct` (`ProductID`),
+  CONSTRAINT `FKSalesOrderItemProduct` FOREIGN KEY (`ProductID`) REFERENCES `product` (`ProductID`),
+  CONSTRAINT `FKSalesOrderItemSO` FOREIGN KEY (`SalesOrderID`) REFERENCES `salesorder` (`SalesOrderID`),
+  CONSTRAINT `CheckSalesOrderQuantity` CHECK ((`Quantity` > 0)),
+  CONSTRAINT `CheckSalesOrderUnitPrice` CHECK ((`UnitPrice` > 0))
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `salesorderitem`
+--
+
+LOCK TABLES `salesorderitem` WRITE;
+/*!40000 ALTER TABLE `salesorderitem` DISABLE KEYS */;
+INSERT INTO `salesorderitem` VALUES (1,1,1,1,120000.00),(2,1,5,1,1800.00),(3,2,4,1,85000.00),(4,3,6,2,6500.00),(6,6,5,50,100.00);
+/*!40000 ALTER TABLE `salesorderitem` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `stockalert`
+--
+
+DROP TABLE IF EXISTS `stockalert`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `stockalert` (
+  `AlertID` int NOT NULL AUTO_INCREMENT,
+  `ProductID` int NOT NULL,
+  `CurrentStock` int NOT NULL,
+  `AlertDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `Status` enum('Open','Resolved') DEFAULT 'Open',
+  PRIMARY KEY (`AlertID`),
+  KEY `FKAlertProduct` (`ProductID`),
+  CONSTRAINT `FKAlertProduct` FOREIGN KEY (`ProductID`) REFERENCES `product` (`ProductID`),
+  CONSTRAINT `CheckCurrentStock` CHECK ((`CurrentStock` >= 0))
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `stockalert`
+--
+
+LOCK TABLES `stockalert` WRITE;
+/*!40000 ALTER TABLE `stockalert` DISABLE KEYS */;
+INSERT INTO `stockalert` VALUES (1,2,4,'2026-06-25 16:36:40','Open'),(2,6,10,'2026-06-25 16:36:40','Resolved'),(3,1,3,'2026-06-25 16:39:54','Open'),(4,1,3,'2026-06-25 16:46:12','Open'),(5,1,3,'2026-06-25 17:07:54','Open');
+/*!40000 ALTER TABLE `stockalert` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `supplier`
+--
+
+DROP TABLE IF EXISTS `supplier`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `supplier` (
+  `SupplierID` int NOT NULL AUTO_INCREMENT,
+  `CompanyName` varchar(70) NOT NULL,
+  `ContactPerson` varchar(100) DEFAULT NULL,
+  `PhoneNumber` varchar(20) DEFAULT NULL,
+  `Email` varchar(100) NOT NULL,
+  `Address` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`SupplierID`),
+  UNIQUE KEY `Email` (`Email`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `supplier`
+--
+
+LOCK TABLES `supplier` WRITE;
+/*!40000 ALTER TABLE `supplier` DISABLE KEYS */;
+INSERT INTO `supplier` VALUES (1,'Tech Solutions Pvt Ltd','Ahmed Raza','03001111111','info@techsolutions.com','Lahore'),(2,'Global Network Systems','Bilal Khan','03002222222','sales@gns.com','Islamabad'),(3,'Office World','Fatima Noor','03003333333','contact@officeworld.com','Karachi');
+/*!40000 ALTER TABLE `supplier` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `systemuser`
+--
+
+DROP TABLE IF EXISTS `systemuser`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `systemuser` (
+  `UserID` int NOT NULL AUTO_INCREMENT,
+  `RoleID` int NOT NULL,
+  `FullName` varchar(70) NOT NULL,
+  `Username` varchar(50) NOT NULL,
+  `PasswordHash` varchar(200) NOT NULL,
+  `Email` varchar(100) NOT NULL,
+  `PhoneNumber` varchar(20) DEFAULT NULL,
+  `Status` enum('Active','Inactive') DEFAULT 'Active',
+  `CreatedAt` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`UserID`),
+  UNIQUE KEY `Username` (`Username`),
+  UNIQUE KEY `Email` (`Email`),
+  KEY `FKUserRole` (`RoleID`),
+  CONSTRAINT `FKUserRole` FOREIGN KEY (`RoleID`) REFERENCES `role` (`RoleID`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `systemuser`
+--
+
+LOCK TABLES `systemuser` WRITE;
+/*!40000 ALTER TABLE `systemuser` DISABLE KEYS */;
+INSERT INTO `systemuser` VALUES (1,1,'Arsalan Tariq','arsalan.admin','admin123','arsalan.tariq@warehouse.com','03001234567','Active','2026-06-25 16:36:40'),(2,2,'Javeria Nasir','javeria.inventory','inventory123','javeria.nasir@warehouse.com','03011234567','Active','2026-06-25 16:36:40'),(3,4,'Muneeb Mustafa','muneeb.sales','sales123','muneeb.mustafa@warehouse.com','03021234567','Active','2026-06-25 16:36:40'),(4,3,'Hamza Ali','hamza.staff','warehouse123','hamza.ali@warehouse.com','03031234567','Active','2026-06-25 16:36:40');
+/*!40000 ALTER TABLE `systemuser` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `viewcurrentinventory`
+--
+
+DROP TABLE IF EXISTS `viewcurrentinventory`;
+/*!50001 DROP VIEW IF EXISTS `viewcurrentinventory`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `viewcurrentinventory` AS SELECT 
+ 1 AS `WarehouseID`,
+ 1 AS `WarehouseName`,
+ 1 AS `ProductID`,
+ 1 AS `ProductName`,
+ 1 AS `SKU`,
+ 1 AS `Quantity`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `viewinventorytransactions`
+--
+
+DROP TABLE IF EXISTS `viewinventorytransactions`;
+/*!50001 DROP VIEW IF EXISTS `viewinventorytransactions`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `viewinventorytransactions` AS SELECT 
+ 1 AS `TransactionID`,
+ 1 AS `ProductName`,
+ 1 AS `WarehouseName`,
+ 1 AS `TransactionType`,
+ 1 AS `Quantity`,
+ 1 AS `TransactionDate`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `viewlowstockproducts`
+--
+
+DROP TABLE IF EXISTS `viewlowstockproducts`;
+/*!50001 DROP VIEW IF EXISTS `viewlowstockproducts`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `viewlowstockproducts` AS SELECT 
+ 1 AS `ProductID`,
+ 1 AS `ProductName`,
+ 1 AS `Quantity`,
+ 1 AS `ReorderLevel`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `viewpurchasesummary`
+--
+
+DROP TABLE IF EXISTS `viewpurchasesummary`;
+/*!50001 DROP VIEW IF EXISTS `viewpurchasesummary`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `viewpurchasesummary` AS SELECT 
+ 1 AS `PurchaseOrderID`,
+ 1 AS `CompanyName`,
+ 1 AS `OrderDate`,
+ 1 AS `Status`,
+ 1 AS `TotalAmount`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `viewsalessummary`
+--
+
+DROP TABLE IF EXISTS `viewsalessummary`;
+/*!50001 DROP VIEW IF EXISTS `viewsalessummary`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `viewsalessummary` AS SELECT 
+ 1 AS `SalesOrderID`,
+ 1 AS `CustomerName`,
+ 1 AS `OrderDate`,
+ 1 AS `Status`,
+ 1 AS `TotalAmount`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `warehouse`
+--
+
+DROP TABLE IF EXISTS `warehouse`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `warehouse` (
+  `WarehouseID` int NOT NULL AUTO_INCREMENT,
+  `WarehouseName` varchar(50) NOT NULL,
+  `Location` varchar(100) NOT NULL,
+  `Capacity` int NOT NULL,
+  `ManagerName` varchar(100) DEFAULT NULL,
+  `Status` enum('Active','Inactive') DEFAULT 'Active',
+  PRIMARY KEY (`WarehouseID`),
+  UNIQUE KEY `WarehouseName` (`WarehouseName`),
+  CONSTRAINT `CheckCapacity` CHECK ((`Capacity` > 0))
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `warehouse`
+--
+
+LOCK TABLES `warehouse` WRITE;
+/*!40000 ALTER TABLE `warehouse` DISABLE KEYS */;
+INSERT INTO `warehouse` VALUES (1,'Central Warehouse','Lahore',1000,'Ahmed Raza','Active'),(2,'North Warehouse','Islamabad',800,'Bilal Khan','Active'),(3,'South Warehouse','Karachi',1200,'Fatima Noor','Active');
+/*!40000 ALTER TABLE `warehouse` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `warehouseproduct`
+--
+
+DROP TABLE IF EXISTS `warehouseproduct`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `warehouseproduct` (
+  `WarehouseID` int NOT NULL,
+  `ProductID` int NOT NULL,
+  `Quantity` int NOT NULL DEFAULT '0',
+  `LastUpdated` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`WarehouseID`,`ProductID`),
+  KEY `idx_WarehouseProductID` (`ProductID`),
+  CONSTRAINT `FKWarehouseID` FOREIGN KEY (`WarehouseID`) REFERENCES `warehouse` (`WarehouseID`),
+  CONSTRAINT `FKWarehouseProductID` FOREIGN KEY (`ProductID`) REFERENCES `product` (`ProductID`),
+  CONSTRAINT `CheckQuantity` CHECK ((`Quantity` >= 0))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `warehouseproduct`
+--
+
+LOCK TABLES `warehouseproduct` WRITE;
+/*!40000 ALTER TABLE `warehouseproduct` DISABLE KEYS */;
+INSERT INTO `warehouseproduct` VALUES (1,1,3,'2026-06-25 16:39:54'),(1,2,15,'2026-06-25 16:36:40'),(1,3,25,'2026-06-25 16:41:08'),(2,4,18,'2026-06-25 16:36:40'),(2,5,59,'2026-06-25 16:40:59'),(3,6,40,'2026-06-25 16:36:40');
+/*!40000 ALTER TABLE `warehouseproduct` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Final view structure for view `viewcurrentinventory`
+--
+
+/*!50001 DROP VIEW IF EXISTS `viewcurrentinventory`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `viewcurrentinventory` AS select `wp`.`WarehouseID` AS `WarehouseID`,`w`.`WarehouseName` AS `WarehouseName`,`p`.`ProductID` AS `ProductID`,`p`.`ProductName` AS `ProductName`,`p`.`SKU` AS `SKU`,`wp`.`Quantity` AS `Quantity` from ((`warehouseproduct` `wp` join `warehouse` `w` on((`wp`.`WarehouseID` = `w`.`WarehouseID`))) join `product` `p` on((`wp`.`ProductID` = `p`.`ProductID`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `viewinventorytransactions`
+--
+
+/*!50001 DROP VIEW IF EXISTS `viewinventorytransactions`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `viewinventorytransactions` AS select `it`.`TransactionID` AS `TransactionID`,`p`.`ProductName` AS `ProductName`,`w`.`WarehouseName` AS `WarehouseName`,`it`.`TransactionType` AS `TransactionType`,`it`.`Quantity` AS `Quantity`,`it`.`TransactionDate` AS `TransactionDate` from ((`inventorytransaction` `it` join `product` `p` on((`it`.`ProductID` = `p`.`ProductID`))) join `warehouse` `w` on((`it`.`WarehouseID` = `w`.`WarehouseID`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `viewlowstockproducts`
+--
+
+/*!50001 DROP VIEW IF EXISTS `viewlowstockproducts`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `viewlowstockproducts` AS select `p`.`ProductID` AS `ProductID`,`p`.`ProductName` AS `ProductName`,`wp`.`Quantity` AS `Quantity`,`p`.`ReorderLevel` AS `ReorderLevel` from (`product` `p` join `warehouseproduct` `wp` on((`p`.`ProductID` = `wp`.`ProductID`))) where (`wp`.`Quantity` < `p`.`ReorderLevel`) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `viewpurchasesummary`
+--
+
+/*!50001 DROP VIEW IF EXISTS `viewpurchasesummary`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `viewpurchasesummary` AS select `po`.`PurchaseOrderID` AS `PurchaseOrderID`,`s`.`CompanyName` AS `CompanyName`,`po`.`OrderDate` AS `OrderDate`,`po`.`Status` AS `Status`,`po`.`TotalAmount` AS `TotalAmount` from (`purchaseorder` `po` join `supplier` `s` on((`po`.`SupplierID` = `s`.`SupplierID`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `viewsalessummary`
+--
+
+/*!50001 DROP VIEW IF EXISTS `viewsalessummary`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `viewsalessummary` AS select `so`.`SalesOrderID` AS `SalesOrderID`,`c`.`CustomerName` AS `CustomerName`,`so`.`OrderDate` AS `OrderDate`,`so`.`Status` AS `Status`,`so`.`TotalAmount` AS `TotalAmount` from (`salesorder` `so` join `customer` `c` on((`so`.`CustomerID` = `c`.`CustomerID`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2026-06-26 22:40:09
